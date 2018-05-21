@@ -1,0 +1,16 @@
+#!/bin/bash
+ledger -f $TIMELOG accounts | sed 's/\([a-z]\)/\U\1/g; s/^/2018-05-07 open Expenses:/' > $TIMELOGBEANCOUNT
+echo "2018-05-07 open Assets:Open" >> $TIMELOGBEANCOUNT
+echo "2018-05-07 price HR	60 MIN" >> $TIMELOGBEANCOUNT
+echo "2018-05-07 price HR	3600 SEC" >> $TIMELOGBEANCOUNT
+echo "2018-05-07 price MIN	60 SEC" >> $TIMELOGBEANCOUNT
+echo 'option "operating_currency" "HR"' >> $TIMELOGBEANCOUNT
+
+ledger -f $TIMELOG register --wide --account_width 200 --date-format '%Y-%m-%d' | sed '
+	s/\([a-z]\)/\U\1/g; 
+	s/\([0-9]\) [^(]*(/\1 \* \"\" \n  Expenses:/; 
+	s/[0-9.]*[A-Z]$//; s/)//g; 
+	s/Expenses:\([^\s]*  \) \([0-9]*\.[0-9]*\)M/Expenses:\1 \2 MIN\n  Assets:Open -\2 MIN/;
+	s/Expenses:\([^\s]*  \) \([0-9]*\.[0-9]*\)H/Expenses:\1 \2 HR\n  Assets:Open -\2 HR/;
+	s/Expenses:\([^\s]*  \) \([0-9][0-9]*\)S/Expenses:\1 \2 SEC\n  Assets:Open -\2 SEC/;
+	' >> $TIMELOGBEANCOUNT

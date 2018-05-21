@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+import plotly
+import plotly.plotly as py
+import plotly.figure_factory as ff
+import os
+import sys
+
+start = sys.argv[1]
+end = sys.argv[2]
+with open(os.environ["TIMELOG"], 'r') as f:
+	lines = f.read().splitlines()
+
+	sorted_lines = sorted(lines, key=lambda x: x[2:22])
+
+	df = []
+	ended = False
+	started = False
+	i=0
+	while(i<len(sorted_lines) and not ended):
+		line = sorted_lines[i]
+		task = line[22:].partition(' ')[0]
+		checkin = line[2:21].replace('/', '-')
+
+		if(started):
+
+			# This is wrong, assumes daily only
+			if(checkin[0:10]!=start):
+				ended = True
+			else:
+				j=i+1
+				found=False
+				while(not found and j<len(sorted_lines)):
+					future_line = sorted_lines[j]
+					if(future_line[0]=='o' and future_line[22:].partition(' ')[0]==task):
+						checkout = future_line[2:21].replace('/', '-')
+						found = True
+						sorted_lines.pop(j)
+					j+=1
+				df.append(dict(Task=task, Start=checkin, Finish=checkout))
+		else:
+			if(checkin[0:10]==start):
+				started=True
+				i -= 1
+		i += 1
+
+
+#df = [
+#    dict(Task='Sleep', Start='2016-01-01', Finish='2016-01-01 6:00:00'),
+#    dict(Task='Breakfast', Start='2016-01-01 7:00:00', Finish='2016-01-01 7:30:00', Resource='Food'),
+#    dict(Task='Work', Start='2016-01-01 9:00:00', Finish='2016-01-01 11:25:00', Resource='Brain'),
+#    dict(Task='Break', Start='2016-01-01 11:30:00', Finish='2016-01-01 12:00:00', Resource='Rest'),
+#    dict(Task='Lunch', Start='2016-01-01 12:00:00', Finish='2016-01-01 13:00:00', Resource='Food'),
+#    dict(Task='Work', Start='2016-01-01 13:00:00', Finish='2016-01-01 17:00:00', Resource='Brain'),
+#    dict(Task='Exercise', Start='2016-01-01 17:30:00', Finish='2016-01-01 18:30:00', Resource='Cardio'), 
+#    dict(Task='Dinner', Start='2016-01-01 19:00:00', Finish='2016-01-01 20:00:00', Resource='Food'),
+#    dict(Task='Sleep', Start='2016-01-01 21:00:00', Finish='2016-01-01 23:59:00', Resource='Sleep')
+#]
+
+#colors = dict(Cardio = 'rgb(46, 137, 205)',
+#              Food = 'rgb(114, 44, 121)',
+#              Sleep = 'rgb(198, 47, 105)',
+#              Brain = 'rgb(58, 149, 136)',
+#              Rest = 'rgb(107, 127, 135)')
+
+#fig = ff.create_gantt(df, colors=colors, index_col='Resource', title='Daily Schedule', show_colorbar=True, bar_width=0.8, showgrid_x=True, showgrid_y=True, group_tasks=True)
+fig = ff.create_gantt(df, title='Daily Schedule', showgrid_x=True, showgrid_y=True, group_tasks=True, height=900,width=1800)
+#py.iplot(fig, filename='gantt-hours-minutes', world_readable=True)
+plotly.offline.plot(fig, filename='gantt-hours-minutes.html')

@@ -1,0 +1,7 @@
+#!/bin/bash
+if [[ $(checkins.py | grep $1) ]]; then
+	echo o `date '+%Y/%m/%d %H:%M:%S'` "$1" >>$TIMELOG
+else
+	echo 'Not checked into' "$1"
+fi
+checkins.py

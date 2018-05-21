@@ -1,0 +1,13 @@
+#!/bin/bash
+if grep -Fxq $1 $TIMELOGACCOUNTS 
+then
+	echo i `date '+%Y/%m/%d %H:%M:%S'` "$1" >>$TIMELOG
+else
+	read -p 'Warning: account not found in timelog. Proceed anyways?' yn
+	case $yn in
+		[Yy]* ) echo i `date '+%Y/%m/%d %H:%M:%S'` "$1" >>$TIMELOG; echo $1 >> $TIMELOGACCOUNTS;;
+		[Nn]* ) exit;;
+		* ) echo "Please answer yes or no.";;
+	esac
+fi
+checkins.py
