@@ -1,7 +1,11 @@
 #!/bin/bash
-if [[ $(checkins.py | grep $1) ]]; then
-	echo o `date '+%Y/%m/%d %H:%M:%S'` "$1" >>$TIMELOG
+if [[ -d "$TIMELOGDIR" && "$(ls -A "$TIMELOGDIR")" ]]; then
+	if [[ $(checkins.py | grep $1) ]]; then
+		echo o `date '+%Y/%m/%d %H:%M:%S'` "$1" >>$TIMELOG
+	else
+		echo 'Not checked into' "$1"
+	fi
+	checkins.py
 else
-	echo 'Not checked into' "$1"
+	echo "Timelog directory not mounted"
 fi
-checkins.py

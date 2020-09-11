@@ -1,0 +1,2 @@
+#!/bin/bash
+checkins.py && timelogtofava && bean-check $TIMELOGBEANCOUNT && today

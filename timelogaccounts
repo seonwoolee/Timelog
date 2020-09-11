@@ -1,0 +1,2 @@
+#!/bin/bash
+ledger -f $TIMELOG accounts && ledger -f $TIMELOG accounts > $TIMELOGACCOUNTS
