@@ -15,5 +15,7 @@ bash, ledger, beancount, python3
 **Required Environment variables**
 
 $TIMELOG: Ledger file containing checkin and checkout entries from ti/to. File will be created upon first use of `ti`.
+
 $TIMELOGBEANCOUNT: Beancount file containing checkin and checkout entries formatted for Beancount. File will be created.
+
 $TIMELOGACCOUNTS: File containing all projects that you've checked into previously. File wil be created upon first use of `timelogaccounts`
